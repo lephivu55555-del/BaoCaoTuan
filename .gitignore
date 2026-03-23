@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+uploads/
+reports/
+debug_*.txt
+test_*.py
+inspect_*.py
+inspect_output.txt
+print_data.py
+test_output.txt
+*.docx
+.env

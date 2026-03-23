@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Auto-Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --text-dim: #94a3b8;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow-x: hidden;
+            padding: 2rem 0;
+        }
+
+        .container {
+            background: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 1.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 450px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            z-index: 1;
+            transition: max-width 0.4s ease;
+        }
+
+        /* Glassmorphism background elements */
+        .blob {
+            position: fixed;
+            width: 400px;
+            height: 400px;
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            filter: blur(100px);
+            border-radius: 50%;
+            z-index: 0;
+            opacity: 0.3;
+        }
+        .blob-1 { top: -150px; left: -150px; }
+        .blob-2 { bottom: -150px; right: -150px; }
+
+        h1 {
+            font-size: 1.875rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-align: center;
+            background: linear-gradient(to right, #818cf8, #c084fc);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p.subtitle {
+            font-size: 0.875rem;
+            color: var(--text-dim);
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-dim);
+        }
+
+        input[type="file"],
+        input[type="date"] {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 0.75rem;
+            border: 1px solid #334155;
+            background: #0f172a;
+            color: var(--text);
+            font-family: inherit;
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        button {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+            margin-top: 1rem;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .btn-secondary {
+            background-color: transparent;
+            border: 1px solid #475569;
+            color: var(--text-dim);
+            margin-top: 0.5rem;
+        }
+
+        .btn-secondary:hover {
+            background-color: #334155;
+        }
+        
+        .btn-download {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 0.75rem;
+            font-weight: 700;
+            box-sizing: border-box;
+            margin-top: 2rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .btn-download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.4);
+        }
+
+        /* Loading UI */
+        #loading {
+            text-align: center;
+            padding: 2rem 0;
+        }
+        
+        .percentage {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, #60a5fa, #3b82f6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .progress-bar-container {
+            width: 100%;
+            height: 8px;
+            background-color: #334155;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+        
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #6366f1, #a855f7);
+            width: 0%;
+            transition: width 0.1s ease-out;
+        }
+
+        /* Results UI */
+        .results-content {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid #334155;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            max-height: 50vh;
+            overflow-y: auto;
+            text-align: left;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        
+        .results-content::-webkit-scrollbar {
+            width: 6px;
+        }
+        .results-content::-webkit-scrollbar-thumb {
+            background-color: #475569;
+            border-radius: 3px;
+        }
+        
+        .day-section {
+            border-bottom: 1px dashed rgba(255,255,255,0.1);
+            padding-bottom: 1rem;
+            margin-bottom: 1rem;
+        }
+        .day-section:last-child {
+            border-bottom: none;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    
+    <div class="container" id="main-container">
+        <h1>Báo Cáo Tự Động</h1>
+        <p class="subtitle">Trích xuất tự động từ nhật ký sự cố</p>
+
+        <!-- Main Form -->
+        <form id="report-form">
+            <div class="form-group">
+                <label for="file">File nhật ký (.docx)</label>
+                <input type="file" name="file" id="file" accept=".docx" required>
+            </div>
+            
+            <div class="form-group" style="display: flex; gap: 1rem;">
+                <div style="flex: 1;">
+                    <label for="start_date">Từ ngày</label>
+                    <input type="date" name="start_date" id="start_date" required>
+                </div>
+                <div style="flex: 1;">
+                    <label for="end_date">Đến ngày</label>
+                    <input type="date" name="end_date" id="end_date" required>
+                </div>
+            </div>
+
+            <button type="submit">🚀 Phân Tích Dữ Liệu</button>
+        </form>
+
+        <!-- Loading Screen -->
+        <div id="loading" style="display: none;">
+            <div class="percentage" id="loading-pct">0%</div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="loading-progress"></div>
+            </div>
+            <p style="color: var(--text-dim); font-size: 0.9rem;">Sếp đợi tí, em đang xử lý...</p>
+        </div>
+
+        <!-- Details Screen -->
+        <div id="results" style="display: none;">
+            <div id="results-content" class="results-content"></div>
+            <a id="download-btn" href="#" class="btn-download">💾 Tải Biên Bản Word (.docx)</a>
+            <button type="button" class="btn-secondary" onclick="resetForm()">Quét tài liệu khác</button>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('report-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const form = e.target;
+            const formData = new FormData(form);
+            
+            // UI Toggle
+            form.style.display = 'none';
+            const mainContainer = document.getElementById('main-container');
+            const loading = document.getElementById('loading');
+            const loadingPct = document.getElementById('loading-pct');
+            const loadingProgress = document.getElementById('loading-progress');
+            const results = document.getElementById('results');
+            const resultsContent = document.getElementById('results-content');
+            const downloadBtn = document.getElementById('download-btn');
+            
+            loading.style.display = 'block';
+            
+            // Animation loop to simulate processing
+            let pct = 0;
+            const loadingInterval = setInterval(() => {
+                if (pct < 98) {
+                    pct += Math.floor(Math.random() * 8) + 1;
+                    if (pct > 98) pct = 98;
+                    loadingPct.innerText = pct + '%';
+                    loadingProgress.style.width = pct + '%';
+                }
+            }, 80); 
+            
+            try {
+                const response = await fetch('/api/generate', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+                
+                // Snap to complete
+                clearInterval(loadingInterval);
+                loadingPct.innerText = '100%';
+                loadingProgress.style.width = '100%';
+                
+                setTimeout(() => {
+                    loading.style.display = 'none';
+                    if (result.success) {
+                        renderResults(result.data, result.config, result.start_date, result.end_date, resultsContent);
+                        downloadBtn.href = result.download_url;
+                        results.style.display = 'block';
+                        mainContainer.style.maxWidth = '750px';
+                    } else {
+                        alert("Lỗi: " + result.error);
+                        resetForm();
+                    }
+                }, 600); 
+            } catch (e) {
+                clearInterval(loadingInterval);
+                alert("Có lỗi kết nối: " + e.message);
+                resetForm();
+            }
+        });
+
+        function renderResults(data, config, startDate, endDate, container) {
+            container.innerHTML = '';
+            
+            let html = `<div style="text-align: center; margin-bottom: 20px;">`;
+            html += `<h2 style="font-size: 1.2rem; color: #f8fafc; font-weight: 700; margin-bottom: 5px;">BÁO CÁO CÔNG VIỆC TỔ KỸ THUẬT SỐ 02</h2>`;
+            html += `<p style="font-size: 0.95rem; color: #cbd5e1; margin-top: 0;">(Từ ngày ${startDate} đến ${endDate})</p>`;
+            html += `</div>`;
+            
+            html += `<p style="margin-bottom: 20px;"><strong style="color:#f8fafc;">Cán bộ thực hiện: </strong> ${config.personnel}</p>`;
+            
+            html += `<h3 style="color:#818cf8; font-size:1.05rem;">1. Các công việc đã hoàn thành trong tuần</h3>`;
+            html += `<ul style="margin-bottom: 20px; list-style-type: square; padding-left: 20px;">`;
+            config.fixed_tasks.forEach(task => {
+                html += `<li style="margin-bottom: 5px; color: #cbd5e1;">${task}</li>`;
+            });
+            html += `</ul>`;
+            
+            html += `<h3 style="color:#818cf8; font-size:1.05rem;">2. Chi tiết xử lý sự cố hàng ngày</h3>`;
+            
+            let p1 = startDate.split('/');
+            let p2 = endDate.split('/');
+            let ds = new Date(p1[2], p1[1]-1, p1[0]);
+            let de = new Date(p2[2], p2[1]-1, p2[0]);
+            let allDays = [];
+            for (let d = new Date(ds); d <= de; d.setDate(d.getDate() + 1)) {
+                let dd = d.getDate();
+                let mm = d.getMonth() + 1;
+                let yy = d.getFullYear();
+                allDays.push((dd < 10 ? '0' + dd : dd) + '/' + (mm < 10 ? '0' + mm : mm) + '/' + yy);
+            }
+
+            allDays.forEach(date => {
+                let events = data[date] || [];
+                html += `<div class="day-section" style="margin-left: 10px;">`;
+                html += `<h4 style="margin: 10px 0 5px 0; color: #f8fafc;">Ngày ${date}</h4>`;
+                
+                if (events.length === 0) {
+                     html += '<p style="margin-left: 10px; margin-top: 0; margin-bottom: 15px; color: #cbd5e1;">Hệ thống giao thông thông minh ITS, hệ thống thu phí ETC, hệ thống truyền dẫn kỹ thuật số DTS, hệ thống kiểm tra tải trọng xe các trạm thu phí đều hoạt động bình thường, không phát sinh hư hỏng.</p>';
+                } else {
+                     events.forEach(ev => {
+                         html += `<p style="margin: 10px 0 2px 10px; font-weight: 600; color:#f8fafc;">*${ev.location}</p>`;
+                         html += `<ul style="margin: 0 0 15px 10px; padding-left: 15px; list-style-type: none;">`;
+                         ev.content.forEach(c => {
+                             html += `<li style="position: relative; padding-left: 15px; margin-bottom: 5px; color: #cbd5e1;"><span style="position: absolute; left: 0;">-</span> ${c}</li>`;
+                         });
+                         html += `</ul>`;
+                     });
+                }
+                html += `</div>`;
+            });
+            
+            html += `<p style="margin-top: 25px;"><strong style="color:#f8fafc;">3. Các công việc bị chậm tiến độ/tồn tại/vướng mắc: </strong> <span style="color:#cbd5e1;">Không.</span></p>`;
+            
+            html += `<h3 style="color:#818cf8; font-size:1.05rem; margin-top: 20px;">4. Kế hoạch tuần tiếp theo:</h3>`;
+            html += `<ul style="margin-bottom: 20px; list-style-type: square; padding-left: 20px;">`;
+            config.next_week_plan.forEach(task => {
+                html += `<li style="margin-bottom: 5px; color: #cbd5e1;">${task}</li>`;
+            });
+            html += `</ul>`;
+            
+            html += `<p style="margin-bottom: 20px;"><strong style="color:#f8fafc;">5. Các đề xuất, kiến nghị, sáng kiến: </strong> <span style="color:#cbd5e1;">Không có.</span></p>`;
+            
+            container.innerHTML = html;
+        }
+
+        function resetForm() {
+            document.getElementById('results').style.display = 'none';
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('report-form').style.display = 'block';
+            document.getElementById('main-container').style.maxWidth = '450px';
+            document.getElementById('loading-pct').innerText = '0%';
+            document.getElementById('loading-progress').style.width = '0%';
+        }
+    </script>
+</body>
+</html>
