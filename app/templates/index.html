@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Report Auto-Generator</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css">
     <style>
         :root {
             --primary: #6366f1;
@@ -88,16 +90,44 @@
         }
 
         input[type="file"],
-        input[type="date"] {
+        input[type="text"].flatpickr-input {
             width: 100%;
-            padding: 0.75rem;
+            padding: 1rem 1.2rem;
             border-radius: 0.75rem;
             border: 1px solid #334155;
             background: #0f172a;
             color: var(--text);
             font-family: inherit;
+            font-size: 1.1rem;
             box-sizing: border-box;
             transition: border-color 0.2s;
+        }
+
+        input[type="file"] {
+            padding: 0.75rem;
+            font-size: 1rem;
+        }
+
+        /* Flatpickr custom styling */
+        .flatpickr-calendar {
+            font-size: 1.05rem !important;
+            border-radius: 1rem !important;
+            border: 1px solid #334155 !important;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5) !important;
+        }
+
+        .flatpickr-calendar .flatpickr-day {
+            font-size: 1rem;
+            height: 42px;
+            line-height: 42px;
+        }
+
+        .flatpickr-calendar .flatpickr-current-month {
+            font-size: 1.15rem;
+        }
+
+        .flatpickr-calendar .flatpickr-weekday {
+            font-size: 0.9rem;
         }
 
         input:focus {
@@ -242,11 +272,11 @@
             <div class="form-group" style="display: flex; gap: 1rem;">
                 <div style="flex: 1;">
                     <label for="start_date">Từ ngày</label>
-                    <input type="date" name="start_date" id="start_date" required>
+                    <input type="text" name="start_date" id="start_date" placeholder="Chọn ngày bắt đầu" required readonly>
                 </div>
                 <div style="flex: 1;">
                     <label for="end_date">Đến ngày</label>
-                    <input type="date" name="end_date" id="end_date" required>
+                    <input type="text" name="end_date" id="end_date" placeholder="Chọn ngày kết thúc" required readonly>
                 </div>
             </div>
 
@@ -403,6 +433,38 @@
             document.getElementById('loading-pct').innerText = '0%';
             document.getElementById('loading-progress').style.width = '0%';
         }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        // Vietnamese Date Pickers
+        const viLocale = {
+            firstDayOfWeek: 1,
+            weekdays: {
+                shorthand: ["CN", "T2", "T3", "T4", "T5", "T6", "T7"],
+                longhand: ["Chủ Nhật", "Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy"]
+            },
+            months: {
+                shorthand: ["Th1", "Th2", "Th3", "Th4", "Th5", "Th6", "Th7", "Th8", "Th9", "Th10", "Th11", "Th12"],
+                longhand: ["Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6", "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"]
+            },
+            rangeSeparator: " đến "
+        };
+
+        flatpickr("#start_date", {
+            locale: viLocale,
+            dateFormat: "Y-m-d",
+            altInput: true,
+            altFormat: "d tháng m, Y",
+            disableMobile: true
+        });
+
+        flatpickr("#end_date", {
+            locale: viLocale,
+            dateFormat: "Y-m-d",
+            altInput: true,
+            altFormat: "d tháng m, Y",
+            disableMobile: true
+        });
     </script>
 </body>
 </html>
