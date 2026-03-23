@@ -454,16 +454,50 @@
             locale: viLocale,
             dateFormat: "Y-m-d",
             altInput: true,
-            altFormat: "d tháng m, Y",
-            disableMobile: true
+            altFormat: "d/m/Y",
+            disableMobile: true,
+            onReady: function(selectedDates, dateStr, instance) {
+                instance.altInput.style.fontSize = "1.1rem";
+                instance.altInput.style.padding = "1rem 1.2rem";
+                instance.altInput.style.background = "#0f172a";
+                instance.altInput.style.color = "#f8fafc";
+                instance.altInput.style.border = "1px solid #334155";
+                instance.altInput.style.borderRadius = "0.75rem";
+                instance.altInput.style.fontFamily = "inherit";
+                instance.altInput.style.width = "100%";
+                instance.altInput.style.boxSizing = "border-box";
+            },
+            onChange: function(selectedDates, dateStr, instance) {
+                if (selectedDates.length > 0) {
+                    const d = selectedDates[0];
+                    instance.altInput.value = d.getDate() + " tháng " + (d.getMonth()+1) + ", " + d.getFullYear();
+                }
+            }
         });
 
         flatpickr("#end_date", {
             locale: viLocale,
             dateFormat: "Y-m-d",
             altInput: true,
-            altFormat: "d tháng m, Y",
-            disableMobile: true
+            altFormat: "d/m/Y",
+            disableMobile: true,
+            onReady: function(selectedDates, dateStr, instance) {
+                instance.altInput.style.fontSize = "1.1rem";
+                instance.altInput.style.padding = "1rem 1.2rem";
+                instance.altInput.style.background = "#0f172a";
+                instance.altInput.style.color = "#f8fafc";
+                instance.altInput.style.border = "1px solid #334155";
+                instance.altInput.style.borderRadius = "0.75rem";
+                instance.altInput.style.fontFamily = "inherit";
+                instance.altInput.style.width = "100%";
+                instance.altInput.style.boxSizing = "border-box";
+            },
+            onChange: function(selectedDates, dateStr, instance) {
+                if (selectedDates.length > 0) {
+                    const d = selectedDates[0];
+                    instance.altInput.value = d.getDate() + " tháng " + (d.getMonth()+1) + ", " + d.getFullYear();
+                }
+            }
         });
     </script>
 </body>
